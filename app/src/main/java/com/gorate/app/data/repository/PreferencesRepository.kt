@@ -94,11 +94,15 @@ class PreferencesRepository(context: Context) {
     fun canUseService(): Boolean = isTrialActive() || isProUser()
 
     /**
-     * Verificación estricta de cuenta Administrador.
-     * Solo la cuenta oficial goza de permisos administrativos.
+     * Verificación estricta y blindada de cuenta Administrador.
+     * Requiere que el usuario esté autenticado en los servidores de Firebase
+     * con el correo oficial, imposibilitando bypasses locales en dispositivos rooteados.
      */
     fun isAdminUser(): Boolean {
-        val email = getUserEmail() ?: ""
-        return email.equals("admin@gorate.app", ignoreCase = true)
+        val authUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        val firebaseEmail = authUser?.email ?: ""
+        val localEmail = getUserEmail() ?: ""
+        return firebaseEmail.equals("admin@gorate.app", ignoreCase = true) &&
+               localEmail.equals("admin@gorate.app", ignoreCase = true)
     }
 }

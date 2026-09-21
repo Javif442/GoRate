@@ -73,9 +73,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAuth() {
-        if (com.google.firebase.auth.FirebaseAuth.getInstance().currentUser == null) {
-            startActivity(Intent(this, com.gorate.app.presentation.auth.AuthActivity::class.java))
+        val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            val intent = Intent(this, com.gorate.app.presentation.auth.AuthActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
+            return
         }
+
+        // Sincronización autoritativa en segundo plano con Cloud Firestore
+        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(currentUser.uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists()) {
+                    val isPro = doc.getBoolean("isPro") == true
+                    val prefs = com.gorate.app.data.repository.PreferencesRepository(this)
+                    prefs.setProUser(isPro)
+                    val mode = doc.getString("driverMode")
+                    if (!mode.isNullOrBlank()) {
+                        prefs.setDriverMode(mode)
+                    }
+                }
+            }
     }
 
     private fun checkAppVersion() {

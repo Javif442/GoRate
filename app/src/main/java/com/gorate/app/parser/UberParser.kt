@@ -21,20 +21,27 @@ class UberParser {
 
     /**
      * Permite actualizar los patrones desde Firebase Remote Config.
-     * Valida que no sean vacíos para evitar excepciones Regex("").
+     * Valida sintaxis con try-catch para evitar excepciones PatternSyntaxException.
      */
     fun updatePatterns(price: String?, distance: String?, time: String?) {
-        if (!price.isNullOrBlank()) {
-            PRICE_PATTERN = price
-            PRICE_REGEX = Regex(price, RegexOption.IGNORE_CASE)
-        }
-        if (!distance.isNullOrBlank()) {
-            DISTANCE_PATTERN = distance
-            DISTANCE_REGEX = Regex(distance, RegexOption.IGNORE_CASE)
-        }
-        if (!time.isNullOrBlank()) {
-            TIME_PATTERN = time
-            TIME_REGEX = Regex(time, RegexOption.IGNORE_CASE)
+        try {
+            if (!price.isNullOrBlank()) {
+                val testRegex = Regex(price, RegexOption.IGNORE_CASE)
+                PRICE_PATTERN = price
+                PRICE_REGEX = testRegex
+            }
+            if (!distance.isNullOrBlank()) {
+                val testRegex = Regex(distance, RegexOption.IGNORE_CASE)
+                DISTANCE_PATTERN = distance
+                DISTANCE_REGEX = testRegex
+            }
+            if (!time.isNullOrBlank()) {
+                val testRegex = Regex(time, RegexOption.IGNORE_CASE)
+                TIME_PATTERN = time
+                TIME_REGEX = testRegex
+            }
+        } catch (_: Exception) {
+            // Ignorar patrones remotos corruptos y mantener los predeterminados seguros
         }
     }
 

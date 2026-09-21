@@ -102,6 +102,7 @@ class OverlayService : Service() {
 
     private var toneGenerator: ToneGenerator? = null
     private val dismissTask = Runnable { hideOverlay() }
+    private var reusableBitmap: Bitmap? = null
 
     enum class ScannerState {
         INACTIVE, STARTING, ACTIVE, RECOVERING, ERROR, REAUTH_REQUIRED
@@ -213,6 +214,10 @@ class OverlayService : Service() {
             wakeLock = null
         } catch (e: Exception) {}
 
+        try {
+            recognizer.close()
+        } catch (_: Exception) {}
+
         releaseResources()
         if (overlayView != null) {
             try { windowManager.removeView(overlayView) } catch (e: Exception) {}
@@ -267,6 +272,10 @@ class OverlayService : Service() {
 
     private fun releaseCaptureResources() {
         try {
+            reusableBitmap?.recycle()
+            reusableBitmap = null
+        } catch (_: Exception) {}
+        try {
             virtualDisplay?.release()
             virtualDisplay = null
             imageReader?.close()
@@ -315,11 +324,26 @@ class OverlayService : Service() {
 
             val width = image.width
             val height = image.height
+            val targetWidth = width + rowPadding / pixelStride
 
-            val finalBitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888)
-            finalBitmap.copyPixelsFromBuffer(buffer)
+            if (reusableBitmap == null || 
+                reusableBitmap?.width != targetWidth || 
+                reusableBitmap?.height != height || 
+                reusableBitmap?.isRecycled == true) {
+                reusableBitmap?.recycle()
+                reusableBitmap = Bitmap.createBitmap(targetWidth, height, Bitmap.Config.ARGB_8888)
+            }
 
-            analyzeContent(finalBitmap)
+            val currentBitmap = reusableBitmap
+            if (currentBitmap == null) {
+                isAnalysisInProgress = false
+                return
+            }
+
+            buffer.rewind()
+            currentBitmap.copyPixelsFromBuffer(buffer)
+
+            analyzeContent(currentBitmap)
         } catch (e: Exception) {
             Log.e(TAG, "Frame sync error", e)
             isAnalysisInProgress = false
@@ -384,7 +408,6 @@ class OverlayService : Service() {
                 Log.e(TAG, "ML Kit processing failed", it)
             }
             .addOnCompleteListener {
-                bitmap.recycle()
                 isAnalysisInProgress = false
             }
     }
