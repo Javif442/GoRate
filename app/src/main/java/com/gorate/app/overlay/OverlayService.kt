@@ -148,8 +148,10 @@ class OverlayService : Service() {
         serviceScope.launch { tripRepository.emitTrip(null, "") }
 
         transitionTo(ScannerState.STARTING)
-        showOverlay()
-        hideOverlay() // Iniciar minimizado en modo burbuja
+        if (prefsRepository.isOverlayBubbleEnabled()) {
+            showOverlay()
+            hideOverlay() // Iniciar minimizado en modo burbuja
+        }
 
         lastSuccessfulSyncTime = System.currentTimeMillis()
         mainHandler.post(watchdogTask)
@@ -269,8 +271,8 @@ class OverlayService : Service() {
         releaseCaptureResources()
 
         val metrics = resources.displayMetrics
-        val width = metrics.widthPixels / 2
-        val height = metrics.heightPixels / 2
+        val width = metrics.widthPixels
+        val height = metrics.heightPixels
 
         try {
             imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)

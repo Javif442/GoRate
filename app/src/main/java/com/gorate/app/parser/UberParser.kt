@@ -16,7 +16,7 @@ class UberParser {
         private var PRICE_REGEX = Regex(PRICE_PATTERN, RegexOption.IGNORE_CASE)
         private var DISTANCE_REGEX = Regex(DISTANCE_PATTERN, RegexOption.IGNORE_CASE)
         private var TIME_REGEX = Regex(TIME_PATTERN, RegexOption.IGNORE_CASE)
-        private val RATING_REGEX = Regex("""\b([3-4][.,]\d{1,2}|5[.,]0{1,2})\b\s*[*★]?""")
+        private val RATING_REGEX = Regex("""(?:\b([3-4][.,]\d{1,2}|5[.,]0{1,2})\s*[*★]|[*★]\s*([3-4][.,]\d{1,2}|5[.,]0{1,2})\b)""")
     }
 
     /**
@@ -41,10 +41,25 @@ class UberParser {
     fun parseFromText(text: String): TripData {
         if (text.isBlank()) return TripData(0.0, 0.0, 0.0, null)
 
-        val price = extractPrice(text)
+        var price = extractPrice(text)
         val timeMin = extractTime(text)
         val distanceKm = extractDistance(text, timeMin)
         val rating = extractRating(text)
+
+        // Heurística de seguridad para tarifas en USD (Ecuador, EE.UU., etc.):
+        // Si el precio por km es exorbitante (> 6.0 $/km) y al dividirlo entre 100 da una tarifa
+        // razonable (0.05 a 3.50 $/km), corregir división por 100 (ej: 288.0 para 20km -> 2.88 para 20km)
+        val isUsdContext = text.contains("US$", ignoreCase = true) || text.contains("USD", ignoreCase = true) || text.contains("USS", ignoreCase = true)
+        if ((isUsdContext || price < 1000.0) && distanceKm > 1.0) {
+            val ratePerKm = price / distanceKm
+            if (ratePerKm > 6.0) {
+                val candidatePrice = price / 100.0
+                val candidateRate = candidatePrice / distanceKm
+                if (candidateRate in 0.05..3.5) {
+                    price = candidatePrice
+                }
+            }
+        }
 
         // 1. FILTRO ANTI-PARPADEO: Si no detecta dinero, es notificación de estado
         if (price == 0.0) {
@@ -103,9 +118,13 @@ class UberParser {
         val matches = PRICE_REGEX.findAll(text).toList()
         if (matches.isEmpty()) return 0.0
 
+        val isUsdContext = text.contains("US$", ignoreCase = true) || 
+                           text.contains("USD", ignoreCase = true) || 
+                           text.contains("USS", ignoreCase = true)
+
         val parsedPrices = matches.mapNotNull { match ->
             val rawValue = match.groupValues.getOrNull(1)?.ifEmpty { null } ?: match.groupValues.getOrNull(2) ?: ""
-            val amount = parseCurrencyAmount(rawValue)
+            val amount = parseCurrencyAmount(rawValue, isUsdContext)
             if (amount in 0.50..500000.0) amount else null
         }
         
@@ -115,7 +134,7 @@ class UberParser {
         return parsedPrices.maxOrNull() ?: 0.0
     }
 
-    private fun parseCurrencyAmount(rawStr: String): Double {
+    private fun parseCurrencyAmount(rawStr: String, isUsdContext: Boolean = false): Double {
         val clean = rawStr.trim().replace(" ", "")
         if (clean.isEmpty()) return 0.0
 
@@ -127,6 +146,14 @@ class UberParser {
         if (clean.matches(Regex("""\d{1,3}(,\d{3})+"""))) {
             return clean.replace(",", "").toDoubleOrNull() ?: 0.0
         }
+
+        // Si estamos en contexto de dólares (US$, USD) y el OCR leyó un entero de 3 o 4 dígitos
+        // sin coma/punto (ej: "288" en vez de "2,88", "1250" en vez de "12,50")
+        if (isUsdContext && clean.matches(Regex("""\d{3,4}"""))) {
+            val intVal = clean.toDoubleOrNull() ?: 0.0
+            return intVal / 100.0
+        }
+
         // Formato Estándar con decimales (ej: 15.50 o 15,50)
         val sanitized = clean.replace(",", ".")
         return sanitized.toDoubleOrNull() ?: 0.0
@@ -193,7 +220,10 @@ class UberParser {
 
     private fun extractRating(text: String): Float? {
         val match = RATING_REGEX.find(text) ?: return null
-        val ratingVal = match.groupValues.getOrNull(1)?.replace(",", ".")?.toFloatOrNull() ?: return null
+        val ratingStr = match.groupValues.getOrNull(1)?.ifEmpty { null }
+            ?: match.groupValues.getOrNull(2)
+            ?: return null
+        val ratingVal = ratingStr.replace(",", ".").toFloatOrNull() ?: return null
         return if (ratingVal in 3.0f..5.0f) ratingVal else null
     }
 }

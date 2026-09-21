@@ -46,6 +46,7 @@ class TripRepositoryImpl(context: Context) : TripRepository {
     private var lastSavedTimestamp = 0L
     private var lastSavedDistance = 0.0
     private var lastSavedPrice = 0.0
+    private var lastSavedTimeMin = 0.0
     private val saveMutex = Mutex()
 
     override suspend fun emitTrip(result: ProfitResult?, origin: String) {
@@ -59,15 +60,38 @@ class TripRepositoryImpl(context: Context) : TripRepository {
             val currentTime = System.currentTimeMillis()
 
             // 1. FILTRO ANTI-PARPADEO (Stabilizer)
-            // Si llega una oferta con el mismo precio en menos de 15 segundos
-            if ((currentTime - lastSavedTimestamp) < 15000 && kotlin.math.abs(result.price - lastSavedPrice) < 0.1) {
-                // Verificamos si la nueva oferta perdió la distancia por un mal escaneo del OCR
-                if (result.distanceKm <= 0.0 && lastSavedDistance > 0.0) {
-                    return@withLock // Descartamos la lectura mala, mantenemos la buena en pantalla
+            // Si llega una oferta en menos de 15 segundos
+            if ((currentTime - lastSavedTimestamp) < 15000) {
+                // Caso A: Si es el mismo viaje con distancia y tiempo casi idénticos
+                val sameDistance = kotlin.math.abs(result.distanceKm - lastSavedDistance) < 0.5
+                val sameTime = kotlin.math.abs(result.timeMin - lastSavedTimeMin) < 1.0
+
+                if (sameDistance && sameTime && lastSavedPrice > 0.0 && result.price > 0.0) {
+                    // Detección de glitch de 100x (ej. $2.88 vs $288.00 por omisión de coma en OCR)
+                    val ratio = result.price / lastSavedPrice
+                    val is100xGlitch = (ratio in 80.0..120.0) || (1.0 / ratio in 80.0..120.0)
+
+                    if (is100xGlitch) {
+                        // Si la nueva lectura es el spike gigante (288.0) y ya teníamos la tarifa normal (2.88), descartamos el spike
+                        if (result.price > lastSavedPrice) {
+                            return@withLock
+                        }
+                        // Si la que teníamos guardada era el spike (288.0) y ahora llegó la correcta (2.88),
+                        // dejamos pasar la corrección para estabilizar la pantalla en el valor real.
+                    } else if (kotlin.math.abs(result.price - lastSavedPrice) < 0.1) {
+                        // Mismo precio exacto y misma distancia/tiempo: no hacer parpadear la UI
+                        return@withLock
+                    }
                 }
-                // Si la distancia varió muy poco (ej. 4.8 km vs 4.7 km por redondeos de Uber)
-                if (kotlin.math.abs(result.distanceKm - lastSavedDistance) < 1.0) {
-                    return@withLock // Es la misma oferta, no hacemos parpadear la pantalla
+
+                // Caso B: Mismo precio pero la nueva perdió la distancia por un mal escaneo del OCR
+                if (kotlin.math.abs(result.price - lastSavedPrice) < 0.1) {
+                    if (result.distanceKm <= 0.0 && lastSavedDistance > 0.0) {
+                        return@withLock // Descartamos la lectura mala, mantenemos la buena en pantalla
+                    }
+                    if (kotlin.math.abs(result.distanceKm - lastSavedDistance) < 1.0) {
+                        return@withLock // Es la misma oferta, no hacemos parpadear la pantalla
+                    }
                 }
             }
 
@@ -84,6 +108,7 @@ class TripRepositoryImpl(context: Context) : TripRepository {
             lastSavedTimestamp = currentTime
             lastSavedDistance = result.distanceKm
             lastSavedPrice = result.price
+            lastSavedTimeMin = result.timeMin
 
             // 4. EMITIR A LA PANTALLA
             _currentTrip.emit(result)
