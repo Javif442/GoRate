@@ -72,12 +72,41 @@ class UberParser {
         }
 
         val (pickup, dropoff) = extractLocations(text)
-        val isDelivery = text.contains("Entrega", ignoreCase = true) ||
+
+        val isRadar = text.contains("Radar", ignoreCase = true) ||
+                      text.contains("Emparejar", ignoreCase = true) ||
+                      text.contains("Emparejando", ignoreCase = true) ||
+                      text.contains("Match", ignoreCase = true)
+
+        val isBatch = Regex("""\b\(?([2-9])\)?\s*(entregas?|pedidos?|paradas?|env[ií]os?|orden(?:es)?)\b""", RegexOption.IGNORE_CASE).containsMatchIn(text) ||
+                      text.contains("(2)", ignoreCase = true) ||
+                      text.contains("(3)", ignoreCase = true) ||
+                      text.contains("2 entregas", ignoreCase = true) ||
+                      text.contains("3 entregas", ignoreCase = true) ||
+                      text.contains("2 pedidos", ignoreCase = true) ||
+                      text.contains("3 pedidos", ignoreCase = true)
+
+        val isAdditional = text.contains("adicional", ignoreCase = true) ||
+                           text.contains("adicionales", ignoreCase = true) ||
+                           (text.contains("+") && (text.contains("km", ignoreCase = true) || text.contains("min", ignoreCase = true)))
+
+        val isDelivery = isBatch ||
+                         text.contains("Entrega", ignoreCase = true) ||
                          text.contains("Paquete", ignoreCase = true) ||
                          text.contains("Flash", ignoreCase = true) ||
                          text.contains("Envío", ignoreCase = true) ||
                          text.contains("Package", ignoreCase = true) ||
-                         text.contains("Comida", ignoreCase = true)
+                         text.contains("Comida", ignoreCase = true) ||
+                         text.contains("Pedido", ignoreCase = true) ||
+                         text.contains("Restaurante", ignoreCase = true)
+
+        val tripTag: String? = when {
+            isRadar && isBatch -> "📡 RADAR • 📦 2 ENTREGAS"
+            isRadar -> "📡 RADAR • EMPAREJAR"
+            isBatch -> "📦 2 PEDIDOS EN LOTE"
+            isAdditional -> "➕ PARADA ADICIONAL"
+            else -> null
+        }
 
         return TripData(
             price = price,
@@ -87,7 +116,9 @@ class UberParser {
             rawText = text,
             isDelivery = isDelivery,
             pickupLocation = pickup,
-            dropoffLocation = dropoff
+            dropoffLocation = dropoff,
+            isRadar = isRadar,
+            tripTag = tripTag
         )
     }
 

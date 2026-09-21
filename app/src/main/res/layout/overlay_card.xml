@@ -36,6 +36,24 @@
         android:alpha="0.80"
         android:elevation="8dp">
 
+        <!-- BADGE PARA RADAR / EMPAREJAR / ENTREGAS MÚLTIPLES -->
+        <TextView
+            android:id="@+id/tvTripTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/badge_radar_rounded"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_marginBottom="8dp"
+            android:text="📡 RADAR • EMPAREJAR"
+            android:textColor="#38BDF8"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <!-- ROW 1: NETO/KM (Principal) | NETO USD | $/H -->
         <LinearLayout
             android:layout_width="match_parent"

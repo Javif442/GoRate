@@ -25,7 +25,9 @@ class CalculateProfitUseCase {
             clientRating = data.clientRating,
             netEarnings = netEarnings,
             pickupLocation = data.pickupLocation,
-            dropoffLocation = data.dropoffLocation
+            dropoffLocation = data.dropoffLocation,
+            isRadar = data.isRadar,
+            tripTag = data.tripTag
         )
     }
 

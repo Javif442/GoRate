@@ -160,7 +160,7 @@ class OverlayService : Service() {
         tripRepository.currentTrip
             .onEach { result ->
                 result?.let {
-                    updateUI(it.price, it.distanceKm, it.timeMin, it.perKm, it.perHour, it.clientRating, it.netEarnings)
+                    updateUI(it.price, it.distanceKm, it.timeMin, it.perKm, it.perHour, it.clientRating, it.netEarnings, it.tripTag)
                 }
             }
             .launchIn(serviceScope)
@@ -376,6 +376,21 @@ class OverlayService : Service() {
                 lastSuccessfulSyncTime = System.currentTimeMillis()
                 val rawText = visionText.text
                 if (rawText.isNotBlank()) {
+                    // Detección de pérdida o expiración de oferta de Radar/Emparejar
+                    val isOfferLost = rawText.contains("emparejó con otro", ignoreCase = true) ||
+                                      rawText.contains("emparejo con otro", ignoreCase = true) ||
+                                      rawText.contains("otro conductor", ignoreCase = true) ||
+                                      rawText.contains("no está disponible", ignoreCase = true) ||
+                                      rawText.contains("no esta disponible", ignoreCase = true) ||
+                                      rawText.contains("agotó el tiempo", ignoreCase = true) ||
+                                      rawText.contains("agoto el tiempo", ignoreCase = true) ||
+                                      rawText.contains("expiró", ignoreCase = true) ||
+                                      rawText.contains("expiro", ignoreCase = true)
+                    if (isOfferLost) {
+                        mainHandler.post { hideOverlay() }
+                        return@addOnSuccessListener
+                    }
+
                     val tripData = parseAnyText(rawText)
                     if (tripData.price > 0 && (tripData.distanceKm > 0 || tripData.timeMin > 0)) {
                         missedScanCount = 0
@@ -388,9 +403,14 @@ class OverlayService : Service() {
                             val result = calculateProfitUseCase(tripData, fuelCost)
                             val driverMode = prefsRepository.getDriverMode()
                             val origin = when (driverMode) {
-                                "CHOFER" -> "Uber Chofer"
-                                "ENTREGA" -> "Uber Entrega"
-                                else -> if (tripData.isDelivery) "Uber Entrega" else "Uber Chofer"
+                                "CHOFER" -> if (tripData.isRadar) "Uber Radar Chofer" else "Uber Chofer"
+                                "ENTREGA" -> if (tripData.isRadar) "Uber Radar Entrega" else "Uber Entrega"
+                                else -> when {
+                                    tripData.isRadar && tripData.isDelivery -> "Uber Radar Entrega"
+                                    tripData.isRadar -> "Uber Radar Chofer"
+                                    tripData.isDelivery -> "Uber Entrega"
+                                    else -> "Uber Chofer"
+                                }
                             }
                             serviceScope.launch { tripRepository.emitTrip(result, origin) }
                         }
@@ -534,7 +554,16 @@ class OverlayService : Service() {
         })
     }
 
-    private fun updateUI(price: Double, distKm: Double, timeMin: Double, perKm: Double, perHour: Double, rating: Float?, netEarnings: Double) {
+    private fun updateUI(
+        price: Double,
+        distKm: Double,
+        timeMin: Double,
+        perKm: Double,
+        perHour: Double,
+        rating: Float?,
+        netEarnings: Double,
+        tripTag: String? = null
+    ) {
         mainHandler.removeCallbacks(dismissTask)
 
         val isMiles = prefsRepository.isMilesEnabled()
@@ -575,7 +604,8 @@ class OverlayService : Service() {
         }
 
         val timeText = if (timeMin > 0) " • ${timeMin.toInt()} min" else ""
-        val notifTitle = "${String.format(Locale.US, "$%.2f", price)} • $recTitle"
+        val tagPrefix = if (!tripTag.isNullOrBlank()) "[$tripTag] " else ""
+        val notifTitle = "$tagPrefix${String.format(Locale.US, "$%.2f", price)} • $recTitle"
         val notifContent = "${String.format(Locale.US, "%.2f", displayDistanceRate)} $/$distanceUnitLabel • ${String.format(Locale.US, "%.2f", displayDistance)} $distanceUnitLabel$timeText"
 
         updateNotification(notifTitle, notifContent)
@@ -589,6 +619,14 @@ class OverlayService : Service() {
                 overlayView?.let { view ->
                     val cardContainer = view.findViewById<View>(R.id.cardContainer)
                     val isNewOffer = cardContainer?.visibility != View.VISIBLE
+
+                    val tvTripTag = view.findViewById<TextView>(R.id.tvTripTag)
+                    if (!tripTag.isNullOrBlank()) {
+                        tvTripTag?.visibility = View.VISIBLE
+                        tvTripTag?.text = tripTag
+                    } else {
+                        tvTripTag?.visibility = View.GONE
+                    }
 
                     view.findViewById<TextView>(R.id.tvPerKm)?.text = String.format(Locale.US, "%.2f", displayDistanceRate)
                     view.findViewById<TextView>(R.id.tvPerHour)?.text = String.format(Locale.US, "%.2f", displayTimeRate)

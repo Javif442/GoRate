@@ -9,5 +9,7 @@ data class ProfitResult(
     val clientRating: Float? = null,
     val netEarnings: Double = 0.0,
     val pickupLocation: String? = null,
-    val dropoffLocation: String? = null
+    val dropoffLocation: String? = null,
+    val isRadar: Boolean = false,
+    val tripTag: String? = null
 )

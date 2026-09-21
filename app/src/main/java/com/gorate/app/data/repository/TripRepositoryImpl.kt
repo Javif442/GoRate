@@ -124,6 +124,7 @@ class TripRepositoryImpl(context: Context) : TripRepository {
                 clientRating = result.clientRating,
                 appOrigin = origin,
                 confidence = "ALTA",
+                note = result.tripTag,
                 netEarnings = result.netEarnings,
                 pickupLocation = result.pickupLocation,
                 dropoffLocation = result.dropoffLocation

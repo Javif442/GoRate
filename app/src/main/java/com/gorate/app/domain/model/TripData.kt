@@ -8,5 +8,7 @@ data class TripData(
     val rawText: String? = null,
     val isDelivery: Boolean = false,
     val pickupLocation: String? = null,
-    val dropoffLocation: String? = null
+    val dropoffLocation: String? = null,
+    val isRadar: Boolean = false,
+    val tripTag: String? = null
 )
