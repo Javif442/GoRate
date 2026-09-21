@@ -94,8 +94,8 @@ class TripRepositoryImpl(context: Context) : TripRepository {
                 }
             }
 
-            // 2. FILTRO DE INTEGRIDAD: Soporta tarifas estándar y monedas en miles (COP, CLP)
-            if (result.price < 0.50 || result.price > 500000.00) {
+            // 2. FILTRO DE INTEGRIDAD: Soporta tarifas estándar y monedas en miles (COP, CLP), descartando resúmenes acumulados
+            if (result.price < 0.50 || result.price > 500000.00 || (result.price > 250.0 && result.perKm > 20.0)) {
                 return@withLock
             }
             if (result.distanceKm <= 0.0 && result.timeMin <= 0.0) {

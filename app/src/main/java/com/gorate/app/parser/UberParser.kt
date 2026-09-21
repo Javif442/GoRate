@@ -41,6 +41,40 @@ class UberParser {
     fun parseFromText(text: String): TripData {
         if (text.isBlank()) return TripData(0.0, 0.0, 0.0, null)
 
+        // 0. FILTRO DE AUTO-IGNORAR: Descartar si el texto proviene de GoRate mismo (Historial, Resumen, etc.)
+        if (text.contains("GoRate", ignoreCase = true) ||
+            text.contains("Historial", ignoreCase = true) ||
+            text.contains("Total Ganado", ignoreCase = true) ||
+            text.contains("Borrar Todo", ignoreCase = true) ||
+            text.contains("Cumplen Metas", ignoreCase = true) ||
+            text.contains("Smart Analyst", ignoreCase = true) ||
+            text.contains("Calculadora", ignoreCase = true) ||
+            text.contains("Periodo de prueba", ignoreCase = true)) {
+            return TripData(0.0, 0.0, 0.0, null)
+        }
+
+        // 1. FIRMA OBLIGATORIA DE OFERTA: Debe contener términos característicos de Uber
+        val hasUberSignature = text.contains("Uber", ignoreCase = true) ||
+                               text.contains("Entrega", ignoreCase = true) ||
+                               text.contains("Recoger", ignoreCase = true) ||
+                               text.contains("Listo!", ignoreCase = true) ||
+                               text.contains("Punto", ignoreCase = true) ||
+                               text.contains("Radar", ignoreCase = true) ||
+                               text.contains("Emparejar", ignoreCase = true) ||
+                               text.contains("Flash", ignoreCase = true) ||
+                               text.contains("Comfort", ignoreCase = true) ||
+                               text.contains("Viaje", ignoreCase = true) ||
+                               text.contains("Paquete", ignoreCase = true) ||
+                               text.contains("Envío", ignoreCase = true) ||
+                               text.contains("Pedido", ignoreCase = true) ||
+                               text.contains("Restaurante", ignoreCase = true) ||
+                               text.contains("Exclusivo", ignoreCase = true) ||
+                               text.contains("Aceptar", ignoreCase = true)
+
+        if (!hasUberSignature) {
+            return TripData(0.0, 0.0, 0.0, null)
+        }
+
         var price = extractPrice(text)
         val timeMin = extractTime(text)
         val distanceKm = extractDistance(text, timeMin)
@@ -61,13 +95,16 @@ class UberParser {
             }
         }
 
-        // 1. FILTRO ANTI-PARPADEO: Si no detecta dinero, es notificación de estado
+        // 2. FILTRO ANTI-PARPADEO: Si no detecta dinero, es notificación de estado
         if (price == 0.0) {
             return TripData(0.0, 0.0, 0.0, null)
         }
 
-        // 2. VALIDACIÓN DE RANGO: Soporta tarifas en USD/EUR y monedas en miles (COP, CLP)
-        if (price !in 0.50..500000.00 || (distanceKm <= 0.05 && timeMin <= 0.5)) {
+        // 3. VALIDACIÓN DE RANGO REALISTA:
+        // En dólares (USD) una tarifa individual nunca supera los $250.00.
+        // Cifras exorbitantes como $56,415 o $169,246 provienen de resúmenes acumulados, no de viajes individuales.
+        val maxRealisticPrice = if (isUsdContext || text.contains("$")) 250.0 else 500000.0
+        if (price !in 0.50..maxRealisticPrice || (distanceKm <= 0.05 && timeMin <= 0.5)) {
             return TripData(0.0, 0.0, 0.0, null)
         }
 

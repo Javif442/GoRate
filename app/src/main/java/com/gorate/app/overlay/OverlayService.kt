@@ -293,6 +293,11 @@ class OverlayService : Service() {
     }
 
     private fun performSync() {
+        if (com.gorate.app.GoRateApplication.isAppInForeground) {
+            checkAutoDismiss()
+            return
+        }
+
         val reader = imageReader ?: return
         val image = try {
             reader.acquireLatestImage()

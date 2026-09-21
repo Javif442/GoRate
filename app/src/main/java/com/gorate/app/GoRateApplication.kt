@@ -12,6 +12,11 @@ import com.gorate.app.data.repository.TripRepositoryImpl
  */
 class GoRateApplication : Application() {
     
+    companion object {
+        var isAppInForeground: Boolean = false
+            private set
+    }
+
     lateinit var tripRepository: TripRepositoryImpl
 
     override fun onCreate() {
@@ -20,9 +25,32 @@ class GoRateApplication : Application() {
         try {
             tripRepository = TripRepositoryImpl(this)
             applyThemeConfiguration()
+            setupActivityLifecycleTracking()
         } catch (e: Exception) {
             Log.e("GoRateApp", "Critical initialization failure", e)
         }
+    }
+
+    private fun setupActivityLifecycleTracking() {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            private var resumedCount = 0
+
+            override fun onActivityResumed(activity: android.app.Activity) {
+                resumedCount++
+                isAppInForeground = resumedCount > 0
+            }
+
+            override fun onActivityPaused(activity: android.app.Activity) {
+                resumedCount--
+                isAppInForeground = resumedCount > 0
+            }
+
+            override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: android.os.Bundle?) {}
+            override fun onActivityStarted(activity: android.app.Activity) {}
+            override fun onActivityStopped(activity: android.app.Activity) {}
+            override fun onActivitySaveInstanceState(activity: android.app.Activity, outState: android.os.Bundle) {}
+            override fun onActivityDestroyed(activity: android.app.Activity) {}
+        })
     }
 
     private fun applyThemeConfiguration() {
