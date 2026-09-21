@@ -17,6 +17,9 @@
     <!-- Permiso requerido para evitar que el sistema cierre la app -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <!-- Permiso oficial para Google Play Billing -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <application
         android:name=".GoRateApplication"
         android:allowBackup="false"

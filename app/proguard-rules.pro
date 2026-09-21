@@ -60,3 +60,7 @@
 # 8. Coroutines y Dispatchers de Kotlin
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+
+# 9. Google Play Billing Client
+-keep class com.android.billingclient.api.** { *; }
+-dontwarn com.android.billingclient.api.**

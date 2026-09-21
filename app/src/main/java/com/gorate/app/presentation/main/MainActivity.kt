@@ -99,6 +99,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
+        // Sincronización con Google Play Billing
+        com.gorate.app.data.billing.BillingManager(this).queryActivePurchases()
     }
 
     private fun checkAppVersion() {

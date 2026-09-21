@@ -137,6 +137,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvPriceAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -146,6 +147,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvPriceSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
@@ -163,6 +165,19 @@
                         android:textStyle="bold"
                         app:backgroundTint="#10B981"
                         app:cornerRadius="16dp" />
+
+                    <TextView
+                        android:id="@+id/btnRestorePurchases"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:padding="8dp"
+                        android:text="¿Ya estás suscrito? Restaurar compras"
+                        android:textColor="@color/brand_indigo"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
