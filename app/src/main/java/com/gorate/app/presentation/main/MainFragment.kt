@@ -31,7 +31,6 @@ import com.gorate.app.databinding.BottomSheetPermissionsBinding
 import com.gorate.app.databinding.FragmentMainBinding
 import com.gorate.app.overlay.OverlayService
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
