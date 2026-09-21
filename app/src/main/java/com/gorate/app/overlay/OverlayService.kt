@@ -562,9 +562,14 @@ class OverlayService : Service() {
         val notifTitle = "$tagPrefix${String.format(Locale.US, "$%.2f", price)} • $recTitle"
         val notifContent = "${String.format(Locale.US, "%.2f", displayDistanceRate)} $/$distanceUnitLabel • ${String.format(Locale.US, "%.2f", displayDistance)} $distanceUnitLabel$timeText"
 
-        updateNotification(notifTitle, notifContent)
         if (!isBubbleEnabled) {
+            updateNotification(notifTitle, notifContent)
             sendHeadsUpNotification(notifTitle, notifContent, colorRes)
+        } else {
+            try {
+                val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                nm.cancel(HEADS_UP_NOTIFICATION_ID)
+            } catch (_: Exception) {}
         }
 
         mainHandler.post {
