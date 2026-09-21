@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Flat white alpha mask vector for Android status bar notification -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,3c-4.97,0 -9,4.03 -9,9 0,2.12 0.74,4.07 1.97,5.61l1.43,-1.43C5.53,14.98 5,13.55 5,12c0,-3.87 3.13,-7 7,-7s7,3.13 7,7c0,1.55 -0.53,2.98 -1.4,4.18l1.43,1.43C20.26,16.07 21,14.12 21,12c0,-4.97 -4.03,-9 -9,-9zM12,8c-2.21,0 -4,1.79 -4,4 0,0.89 0.36,1.7 0.94,2.29l1.42,-1.42C10.13,12.63 10,12.33 10,12c0,-1.1 0.9,-2 2,-2s2,0.9 2,2c0,0.33 -0.13,0.63 -0.36,0.87l1.42,1.42c0.58,-0.59 0.94,-1.4 0.94,-2.29 0,-2.21 -1.79,-4 -4,-4z"/>
+</vector>

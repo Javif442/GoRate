@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colores Sobreescritos (Dark Mode) -->
+    <color name="app_bg">#18181B</color>
+    <color name="app_card">#27272A</color>
+    <color name="app_card_light">#3F3F46</color>
+    <color name="app_border">#3F3F46</color>
+
+    <color name="text_main">#FAFAFA</color>
+    <color name="text_sub">#94A3B8</color>
+</resources>

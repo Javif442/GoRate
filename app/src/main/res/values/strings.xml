@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">GoRate</string>
+
+    <!-- UI Strings -->
+    <string name="status_title_active">Servicio Activo</string>
+    <string name="status_desc_active">Analizando ofertas en tiempo real...</string>
+    <string name="status_title_inactive">Escáner Detenido</string>
+    <string name="status_desc_inactive">Activa para comenzar a analizar viajes</string>
+    <string name="status_active">GoRate está activo</string>
+    <string name="status_analyzing">Analizando ofertas ahora.</string>
+    <string name="status_inactive">Actívalo para empezar jornada</string>
+    <string name="status_scanning">Analizando ofertas ahora</string>
+    <string name="turbo_mode">Modo Turbo</string>
+    <string name="turbo_desc">Escaneo cada 1s. Recomendado.</string>
+    <string name="tools_title">Herramientas</string>
+    <string name="limits_title">Límites</string>
+    <string name="history_title">Historial</string>
+    <string name="settings_app">Ajustes app</string>
+    <string name="help_title">Ayuda</string>
+    <string name="permission_required">Permiso de captura necesario para GoRate</string>
+    <string name="limits_saved">Límites y unidades guardados 🇪🇨</string>
+
+    <!-- User Settings -->
+    <string name="logout_toast">Cerrar sesión</string>
+    <string name="config_permissions_toast">Configurar permisos</string>
+    <string name="redirect_store">Redirigiendo a Play Store...</string>
+
+    <!-- Overlay Recommendations -->
+    <string name="rec_accept">✔ ACEPTAR</string>
+    <string name="rec_consider">⚠ CONSIDERAR</string>
+    <string name="rec_reject">✖ RECHAZAR</string>
+    <string name="rec_evaluating">EVALUANDO</string>
+    <string name="label_total">TOTAL</string>
+
+    <!-- Update Dialog -->
+    <string name="update_title">Actualización obligatoria</string>
+    <string name="update_msg">Hay una nueva versión disponible. Para continuar usando la aplicación debes actualizarla.</string>
+    <string name="update_btn">Actualizar ahora</string>
+    <string name="notification_channel_name">Sistema de Soporte</string>
+    <string name="notification_title">Servicio de Optimización</string>
+    <string name="notification_content">Soporte de interfaz activo</string>
+    <string name="notification_stop">Detener</string>
+    <string name="help_how_it_works">Cómo funciona GoRate</string>
+    <string name="zoomed_image_desc">Imagen ampliada</string>
+    <string name="btn_close">Cerrar</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_high_profit">Alta Rentabilidad</string>
+    <string name="filter_today">Hoy</string>
+    <string name="default_user_email">invitado@gorate.app</string>
+    <string name="login_status_none">Sesión no iniciada</string>
+    <string name="login_status_google">Sesión iniciada con Google</string>
+    <string name="privacy_disclosure_title">Aviso de Privacidad y Seguridad</string>
+    <string name="privacy_disclosure_msg">GoRate utiliza la Grabación de Pantalla ÚNICAMENTE para leer precios y distancias de ofertas de viaje mientras conduces. \n\n1. No recolectamos datos personales.\n2. No automatizamos acciones en otras apps.\n3. El procesamiento es 100% local en tu dispositivo.\n\nAl continuar, confirmas que comprendes y aceptas el uso de esta herramienta para calcular la rentabilidad de tus viajes.</string>
+    <string name="privacy_disclosure_btn">Comprendo y Acepto</string>
+</resources>

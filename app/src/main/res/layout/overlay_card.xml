@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <!-- BUBBLE MODE -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bubbleContainer"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:alpha="0.75"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/brand_indigo"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="#38BDF8">
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_brand_logo"
+            app:tint="@color/white_fixed" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- CARD MODE: Pro Glassmorphism Panel with $/km as Primary Metric -->
+    <LinearLayout
+        android:id="@+id/cardContainer"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_rounded"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone"
+        android:alpha="0.80"
+        android:elevation="8dp">
+
+        <!-- ROW 1: NETO/KM (Principal) | NETO USD | $/H -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false"
+            android:layout_marginBottom="8dp">
+
+            <!-- NETO/KM (El rey de la rentabilidad) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NETO / KM ⭐"
+                    android:textColor="#38BDF8"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvPerKm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0,00"
+                    android:textColor="#EF4444"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- NETO USD -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NETO"
+                    android:textColor="#94A3B8"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvNetEarnings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0,00"
+                    android:textColor="@color/white_fixed"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- $/h y Cerrar -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$/h"
+                        android:textColor="#94A3B8"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                    <ImageButton
+                        android:id="@+id/btnCloseOverlay"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentEnd="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        app:tint="#94A3B8" />
+                </RelativeLayout>
+                <TextView
+                    android:id="@+id/tvPerHour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0,00"
+                    android:textColor="@color/white_fixed"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#334155"
+            android:layout_marginBottom="8dp" />
+
+        <!-- ROW 2: NOTA | KM | TIEMPO -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false"
+            android:layout_marginBottom="8dp">
+
+            <!-- Nota -->
+            <LinearLayout
+                android:id="@+id/containerRating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="nota"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/tvClientRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5,0 ★"
+                    android:textColor="#F59E0B"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- KM -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="km"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/tvTripSubInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0,0 km"
+                    android:textColor="@color/white_fixed"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- TIEMPO -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="tiempo"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/tvTripMainInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0min"
+                    android:textColor="@color/white_fixed"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Barra de progreso inferior -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <View
+                android:id="@+id/barPerKm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/status_red" />
+            <View
+                android:id="@+id/barPerHour"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="2dp"
+                android:background="@color/status_red" />
+            <View
+                android:id="@+id/barRating"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="2dp"
+                android:background="@color/status_green" />
+        </LinearLayout>
+
+        <!-- RECOMENDACIÓN / ACEPTAR / CONSIDERAR / RECHAZAR -->
+        <TextView
+            android:id="@+id/tvRecommendation"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/card_rounded"
+            android:gravity="center"
+            android:text="EVALUANDO..."
+            android:textColor="@color/white_fixed"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</FrameLayout>

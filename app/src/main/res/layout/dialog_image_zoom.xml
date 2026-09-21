@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#AA000000"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/imgZoomed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/zoomed_image_desc"
+        android:src="@drawable/ic_brand_logo" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCloseZoom"
+        style="@style/Widget.Material3.Button.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:text="@string/btn_close"
+        android:textColor="@android:color/white" />
+</FrameLayout>

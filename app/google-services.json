@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "780974179723",
+    "project_id": "studio-6494948774-f92a8",
+    "storage_bucket": "studio-6494948774-f92a8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780974179723:android:c11d23461d401f170c5b8e",
+        "android_client_info": {
+          "package_name": "com.gorate.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780974179723-4aqll7ntklfnjrpkrapajriv8jtj19rm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gorate.app",
+            "certificate_hash": "55e1520975138ec2dcb8b862664f73e96c08f91e"
+          }
+        },
+        {
+          "client_id": "780974179723-dqjp8r1656m17713ncs1m4jf6umqo0e0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYGcjMIGvU5lmCz3tySreY-zr3rY8sLBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780974179723-dqjp8r1656m17713ncs1m4jf6umqo0e0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

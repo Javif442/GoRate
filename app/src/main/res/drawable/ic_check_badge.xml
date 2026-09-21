@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Borde exterior lineal de la insignia -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M23,12L20.56,9.21L20.9,5.52L17.13,4.66L15.17,1.46L12,2.83L8.83,1.46L6.87,4.66L3.1,5.52L3.44,9.21L1,12L3.44,14.79L3.1,18.48L6.87,19.34L8.83,22.54L12,21.17L15.17,22.54L17.13,19.34L20.9,18.48L20.56,14.79L23,12ZM18.89,13.91L19.16,16.89L16.12,17.58L14.54,20.16L12,19.06L9.46,20.16L7.88,17.58L4.84,16.89L5.11,13.91L3.15,12L5.11,10.09L4.84,7.11L7.88,6.42L9.46,3.84L12,4.94L14.54,3.84L16.12,6.42L19.16,7.11L18.89,10.09L20.85,12L18.89,13.91Z" />
+
+    <!-- Marca de verificado (check) flotante -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10,15.17L6.83,12L5.41,13.41L10,18L19,9L17.59,7.59L10,15.17Z" />
+</vector>

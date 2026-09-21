@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Principal GoRate Pro -->
+    <style name="Theme.GoRate" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_indigo</item>
+        <item name="android:windowBackground">@color/app_bg</item>
+        <item name="android:statusBarColor">@color/app_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+
+    <!-- Tema para Diálogos -->
+    <style name="Theme.App.Dialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="colorPrimary">@color/brand_indigo</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <!-- BottomNavigationView Minimalista -->
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/app_bg</item>
+        <item name="itemIconTint">@color/bottom_nav_colors</item>
+        <item name="itemTextColor">@color/bottom_nav_colors</item>
+        <item name="itemRippleColor">@color/app_card_light</item>
+    </style>
+</resources>

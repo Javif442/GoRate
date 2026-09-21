@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colores Base (Emerald Green & Zinc) -->
+    <color name="brand_indigo">#10B981</color>
+
+    <color name="app_bg">#F8F9FA</color>
+    <color name="app_card">#FFFFFF</color>
+    <color name="app_card_light">#F1F5F9</color>
+    <color name="app_border">#E2E8F0</color>
+
+    <color name="text_main">#1A1C1E</color>
+    <color name="text_sub">#44474E</color>
+    <color name="white_fixed">#FFFFFF</color>
+
+    <!-- Semáforo -->
+    <color name="status_green">#10B981</color>
+    <color name="status_yellow">#F59E0B</color>
+    <color name="status_red">#EF4444</color>
+
+    <!-- Aliases para compatibilidad -->
+    <color name="md_theme_primary">@color/brand_indigo</color>
+    <color name="text_primary">@color/text_main</color>
+    <color name="text_secondary">@color/text_sub</color>
+    <color name="zinc_bg">@color/app_bg</color>
+    <color name="zinc_card">@color/app_card</color>
+    <color name="zinc_border">@color/app_border</color>
+    <color name="white_text">@color/text_main</color>
+    <color name="slate_text">@color/text_sub</color>
+    <color name="neon_purple">@color/brand_indigo</color>
+</resources>

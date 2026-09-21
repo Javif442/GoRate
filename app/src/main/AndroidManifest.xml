@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Permisos de Red y Conectividad -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Permisos de Sistema y Segundo Plano -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Permiso requerido para la vibración táctil -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Permiso requerido para evitar que el sistema cierre la app -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <application
+        android:name=".GoRateApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_brand_logo"
+        android:roundIcon="@drawable/ic_brand_logo"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.GoRate">
+
+        <activity
+            android:name=".presentation.main.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".presentation.auth.AuthActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".presentation.auth.OnboardingActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.main.PrivacyPolicyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.main.SubscriptionActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.main.SupportActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.history.HistoryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.history.SmartAnalystActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.admin.AdminDashboardActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".accessibility.GoRateNotificationListener"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".overlay.OverlayService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false"
+            android:foregroundServiceType="specialUse|mediaProjection">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="system_ui_support" />
+        </service>
+
+    </application>
+
+</manifest>

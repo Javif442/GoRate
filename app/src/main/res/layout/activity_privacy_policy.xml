@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F172A"
+    android:orientation="vertical">
+
+    <!-- Header Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#0F172A">
+        <ImageButton
+            android:id="@+id/btnBackPrivacy"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="#FFFFFF" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Política de Privacidad y Términos"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Título Principal y Fecha de Actualización -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Política de Privacidad Oficial de GoRate"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:text="Última actualización conforme al Reglamento de Google Play: Septiembre 2026"
+                android:textColor="#94A3B8"
+                android:textSize="12sp" />
+
+            <!-- Card 1: Declaración Prominente -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="14dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📌 Declaración Prominente y Procesamiento Local"
+                        android:textColor="#38BDF8"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="GoRate procesa la información de las ofertas de viaje de forma 100% LOCAL e instantánea en el dispositivo del usuario mediante reconocimiento óptico de caracteres (Google ML Kit On-Device).\n\n• NINGUNA imagen, captura de pantalla o fotograma es enviado, almacenado ni transmitido a servidores externos.\n• Las capturas de pantalla utilizadas para el cálculo se descartan y liberan de la memoria RAM del teléfono en milisegundos tras ser procesadas."
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Permisos Sensibles de Android -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="14dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔒 Uso de Permisos Sensibles de Android"
+                        android:textColor="#38BDF8"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="Para brindar recomendaciones de rentabilidad en tiempo real, GoRate solicita los siguientes permisos del sistema:\n\n1. Captura de Pantalla (MediaProjection API): Requerido exclusivamente para leer las tarifas y distancias de las ofertas de transporte mientras el conductor opera la aplicación.\n\n2. Superposición sobre otras aplicaciones (SYSTEM_ALERT_WINDOW): Requerido para mostrar la tarjeta flotante opcional con el semáforo de rentabilidad (Verde, Amarillo, Rojo).\n\n3. Servicio en Primer Plano y Notificaciones (FOREGROUND_SERVICE_MEDIA_PROJECTION &amp; POST_NOTIFICATIONS): Necesario para mantener el análisis en segundo plano sin ser cerrado por el sistema y emitir las alertas emergentes.\n\n4. Acceso a Notificaciones (BIND_NOTIFICATION_LISTENER_SERVICE): Utilizado exclusivamente para detectar alertas de nuevas ofertas de Uber cuando la aplicación de transporte no está en pantalla (por ejemplo, mientras navegas en Google Maps o Waze) y calcular su rentabilidad al instante. GoRate nunca lee, almacena ni comparte mensajes personales ni notificaciones de otras apps."
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Datos Almacenados y Seguridad -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="14dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📂 Almacenamiento de Datos y Seguridad"
+                        android:textColor="#38BDF8"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="• Historial de Viajes: El historial contable (precio, distancia, tiempo y ganancia neta) se guarda de forma privada en la base de datos local de tu teléfono (Room DB). El usuario tiene control total para borrar su historial en cualquier momento desde la pantalla de Historial.\n\n• Autenticación y Cuenta: Tu correo electrónico se utiliza mediante Google Firebase Auth únicamente para autenticar la suscripción y mantener tu cuenta activa.\n\n• No Comercialización: GoRate no vende, alquila ni comparte datos personales o de ubicación con anunciantes ni con empresas de transporte."
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 4: Deslinde de Responsabilidad y Marcas -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="14dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🤝 Independencia y Marcas Registradas"
+                        android:textColor="#38BDF8"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="GoRate es una herramienta independiente de cálculo de rentabilidad para conductores y no está afiliada, asociada, autorizada, patrocinada ni respaldada de ninguna manera por Uber Technologies Inc., DiDi Chuxing, InDrive, ni ninguna otra plataforma de transporte.\n\nTodas las marcas comerciales y logotipos son propiedad de sus respectivos dueños."
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 5: Derechos del Usuario y Contacto -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="14dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📞 Derechos del Usuario y Contacto Oficial"
+                        android:textColor="#38BDF8"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="Conforme a las normativas de protección de datos (GDPR / LOPD / Políticas de Google Play), tienes derecho a solicitar la eliminación completa de tus datos de usuario enviando una solicitud a nuestro equipo de soporte técnico:\n\n• Soporte WhatsApp: +593 969 609 268\n• Correo Oficial: soporte@gorate.app\n• Desarrollador: GoRate Software Inc."
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
