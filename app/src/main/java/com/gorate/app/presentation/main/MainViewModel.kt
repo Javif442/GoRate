@@ -20,7 +20,6 @@ class MainViewModel(
     companion object {
         const val DEFAULT_MIN_PER_KM = 0.80
         const val DEFAULT_MIN_PER_HOUR = 8.00
-        private const val TRIAL_DAYS = 15
     }
 
     private val _isServiceActive = MutableStateFlow(false)
@@ -78,6 +77,9 @@ class MainViewModel(
 
     fun isProUser(): Boolean = preferences.isProUser()
     fun canUseService(): Boolean = preferences.canUseService()
+    fun isTrialActive(): Boolean = preferences.isTrialActive()
+    fun isTrialExpired(): Boolean = preferences.isTrialExpired()
+    fun getTrialDaysRemaining(): Int = preferences.getTrialDaysRemaining()
 
     fun getThemeMode(): Int = preferences.getThemeMode()
     fun setThemeMode(mode: Int) = preferences.setThemeMode(mode)
@@ -101,5 +103,26 @@ class MainViewModel(
         val expiryTime = preferences.getTrialExpiryTimestamp()
         val sdf = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault())
         return sdf.format(java.util.Date(expiryTime))
+    }
+
+    fun getTrialStatusMessage(): String {
+        if (preferences.isAdminUser()) {
+            return "⚡ Administrador • Pro Ilimitado"
+        }
+        if (preferences.isProUser()) {
+            return "⭐ Membresía PRO Activa"
+        }
+        if (preferences.isTrialActive()) {
+            val dateStr = getTrialExpiryDate()
+            val days = preferences.getTrialDaysRemaining()
+            return if (days > 1) {
+                "Prueba activa • Vence el $dateStr ($days días)"
+            } else if (days == 1) {
+                "Prueba activa • Vence hoy ($dateStr)"
+            } else {
+                "Prueba activa • Vence el $dateStr"
+            }
+        }
+        return "⛔ Prueba gratuita finalizada • Suscríbete"
     }
 }

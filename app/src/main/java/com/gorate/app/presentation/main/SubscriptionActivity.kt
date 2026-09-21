@@ -84,15 +84,21 @@ class SubscriptionActivity : AppCompatActivity() {
 
     private fun updateUiState(isPro: Boolean, isTrial: Boolean) {
         if (isPro) {
+            binding.tvSubHeaderTitle.text = "¡Eres Miembro PRO!"
+            binding.tvSubHeaderSubtitle.text = "Tu suscripción mensual a GoRate PRO se encuentra activa con acceso total."
             binding.btnSubscribeNow.text = "⭐ Membresía PRO Activa"
             binding.btnSubscribeNow.isEnabled = false
             binding.btnSubscribeNow.alpha = 0.8f
         } else if (isTrial) {
+            binding.tvSubHeaderTitle.text = "¡Gracias por preferirnos!"
+            binding.tvSubHeaderSubtitle.text = "Disfruta de 1 mes de uso totalmente gratuito. Suscríbete para asegurar tu acceso continuo a GoRate PRO sin interrupciones."
             binding.btnSubscribeNow.text = "Activar Plan PRO Mensual"
             binding.btnSubscribeNow.isEnabled = true
             binding.btnSubscribeNow.alpha = 1.0f
         } else {
-            binding.btnSubscribeNow.text = "Suscribirme Ahora"
+            binding.tvSubHeaderTitle.text = "Tu mes de prueba ha finalizado"
+            binding.tvSubHeaderSubtitle.text = "Tu periodo gratuito de 30 días ha concluido. Suscríbete al Plan Mensual para seguir analizando viajes y organizando tus ingresos en tiempo real."
+            binding.btnSubscribeNow.text = "Suscribirme Ahora (Plan Mensual)"
             binding.btnSubscribeNow.isEnabled = true
             binding.btnSubscribeNow.alpha = 1.0f
         }

@@ -83,6 +83,12 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        val prefs = com.gorate.app.data.repository.PreferencesRepository(this)
+        val authCreated = currentUser.metadata?.creationTimestamp ?: 0L
+        if (authCreated > 0L) {
+            prefs.syncInstallTimestamp(authCreated)
+        }
+
         // Sincronización autoritativa en segundo plano con Cloud Firestore
         com.google.firebase.firestore.FirebaseFirestore.getInstance()
             .collection("users")
@@ -91,11 +97,14 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { doc ->
                 if (doc.exists()) {
                     val isPro = doc.getBoolean("isPro") == true
-                    val prefs = com.gorate.app.data.repository.PreferencesRepository(this)
                     prefs.setProUser(isPro)
                     val mode = doc.getString("driverMode")
                     if (!mode.isNullOrBlank()) {
                         prefs.setDriverMode(mode)
+                    }
+                    val firestoreCreatedAt = doc.getLong("createdAt") ?: 0L
+                    if (firestoreCreatedAt > 0L) {
+                        prefs.syncInstallTimestamp(firestoreCreatedAt)
                     }
                 }
             }

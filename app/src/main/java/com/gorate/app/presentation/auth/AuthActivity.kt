@@ -157,6 +157,10 @@ class AuthActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         val prefs = PreferencesRepository(this)
                         prefs.setUserEmail(email)
+                        val authCreated = auth.currentUser?.metadata?.creationTimestamp ?: 0L
+                        if (authCreated > 0L) {
+                            prefs.syncInstallTimestamp(authCreated)
+                        }
                         val uid = auth.currentUser?.uid
                         if (uid != null) {
                             db.collection("users").document(uid).get().addOnSuccessListener { doc ->
@@ -166,6 +170,10 @@ class AuthActivity : AppCompatActivity() {
                                     val mode = doc.getString("driverMode")
                                     if (!mode.isNullOrBlank()) {
                                         prefs.setDriverMode(mode)
+                                    }
+                                    val firestoreCreatedAt = doc.getLong("createdAt") ?: 0L
+                                    if (firestoreCreatedAt > 0L) {
+                                        prefs.syncInstallTimestamp(firestoreCreatedAt)
                                     }
                                 }
                             }
@@ -189,6 +197,7 @@ class AuthActivity : AppCompatActivity() {
                 return
             }
 
+            val now = System.currentTimeMillis()
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
@@ -201,7 +210,7 @@ class AuthActivity : AppCompatActivity() {
                                 "firstName" to firstName,
                                 "lastName" to lastName,
                                 "driverMode" to selectedMode,
-                                "createdAt" to System.currentTimeMillis(),
+                                "createdAt" to now,
                                 "isPro" to false
                             )
                             db.collection("users").document(it.uid).set(userMap)
@@ -211,6 +220,7 @@ class AuthActivity : AppCompatActivity() {
                         prefs.setUserEmail(email)
                         prefs.setDriverMode(selectedMode)
                         prefs.setProUser(false)
+                        prefs.syncInstallTimestamp(now)
 
                         Toast.makeText(this, "¡Cuenta creada con éxito! Se ha enviado un correo de verificación.", Toast.LENGTH_LONG).show()
                         val intent = Intent(this, MainActivity::class.java).apply {

@@ -54,11 +54,23 @@ class UserFragment : Fragment() {
     private fun updateUserUi() {
         val prefs = PreferencesRepository(requireContext())
         if (viewModel.isAdminUser()) {
-            binding.tvExpiryInfo.text = "⚡ Administrador • Pro Ilimitado"
+            binding.tvSubscriptionTitle.text = "Administrador"
+            binding.tvExpiryInfo.text = "⚡ Acceso Total • Pro Ilimitado"
+            binding.tvExpiryInfo.setTextColor(android.graphics.Color.parseColor("#10B981"))
         } else if (prefs.isProUser()) {
-            binding.tvExpiryInfo.text = "⭐ Suscripción Pro Activa"
+            binding.tvSubscriptionTitle.text = "Suscripción Activa"
+            binding.tvExpiryInfo.text = "⭐ GoRate PRO Oficial"
+            binding.tvExpiryInfo.setTextColor(android.graphics.Color.parseColor("#10B981"))
+        } else if (prefs.isTrialActive()) {
+            binding.tvSubscriptionTitle.text = "Prueba Gratuita (1 Mes)"
+            val days = prefs.getTrialDaysRemaining()
+            val dateStr = viewModel.getTrialExpiryDate()
+            binding.tvExpiryInfo.text = "Vence el $dateStr ($days días restantes)"
+            binding.tvExpiryInfo.setTextColor(android.graphics.Color.parseColor("#64748B"))
         } else {
-            binding.tvExpiryInfo.text = "Tu prueba termina el ${viewModel.getTrialExpiryDate()}"
+            binding.tvSubscriptionTitle.text = "Prueba Gratuita Expirada"
+            binding.tvExpiryInfo.text = "❌ Tu mes gratis terminó. Debes suscribirte para continuar."
+            binding.tvExpiryInfo.setTextColor(android.graphics.Color.parseColor("#DC2626"))
         }
 
         val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser

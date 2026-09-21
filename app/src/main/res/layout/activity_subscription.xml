@@ -58,6 +58,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
+                android:id="@+id/tvSubHeaderTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="¡Gracias por preferirnos!"
@@ -66,6 +67,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvSubHeaderSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

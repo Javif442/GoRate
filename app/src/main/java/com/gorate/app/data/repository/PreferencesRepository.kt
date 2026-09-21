@@ -79,6 +79,15 @@ class PreferencesRepository(context: Context) {
         return installTime
     }
 
+    fun syncInstallTimestamp(timestamp: Long) {
+        if (timestamp <= 0L) return
+        val currentInstall = prefs.getLong("install_timestamp", 0L)
+        // Usar la fecha más antigua conocida (fecha de registro de cuenta original)
+        if (currentInstall == 0L || timestamp < currentInstall) {
+            prefs.edit().putLong("install_timestamp", timestamp).apply()
+        }
+    }
+
     fun getTrialExpiryTimestamp(): Long {
         val thirtyDaysMillis = 30L * 24 * 60 * 60 * 1000L
         return getInstallTimestamp() + thirtyDaysMillis
@@ -86,6 +95,15 @@ class PreferencesRepository(context: Context) {
 
     fun isTrialActive(): Boolean {
         return System.currentTimeMillis() < getTrialExpiryTimestamp()
+    }
+
+    fun isTrialExpired(): Boolean {
+        return !isTrialActive() && !isProUser()
+    }
+
+    fun getTrialDaysRemaining(): Int {
+        val remaining = getTrialExpiryTimestamp() - System.currentTimeMillis()
+        return if (remaining <= 0L) 0 else ((remaining / (24 * 60 * 60 * 1000L)) + 1).toInt()
     }
 
     fun isProUser(): Boolean = prefs.getBoolean("is_pro_user", false) || isAdminUser()

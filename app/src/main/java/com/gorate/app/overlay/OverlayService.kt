@@ -112,6 +112,10 @@ class OverlayService : Service() {
 
     private val monitorTask = object : Runnable {
         override fun run() {
+            if (!prefsRepository.canUseService()) {
+                stopSelf()
+                return
+            }
             if (currentState == ScannerState.ACTIVE && !isAnalysisInProgress) {
                 performSync()
             }
@@ -160,6 +164,11 @@ class OverlayService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (!prefsRepository.canUseService()) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         if (intent?.action == ACTION_STOP) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 stopForeground(STOP_FOREGROUND_REMOVE)

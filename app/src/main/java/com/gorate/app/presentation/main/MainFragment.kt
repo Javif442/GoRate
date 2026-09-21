@@ -107,6 +107,7 @@ class MainFragment : Fragment() {
         super.onResume()
         clockHandler.post(clockRunnable)
         updatePicoPlacaStatus()
+        updateSubscriptionBadge()
     }
 
     override fun onPause() {
@@ -114,13 +115,55 @@ class MainFragment : Fragment() {
         clockHandler.removeCallbacks(clockRunnable)
     }
 
+    private fun updateSubscriptionBadge() {
+        binding.apply {
+            val statusMsg = viewModel.getTrialStatusMessage()
+            tvTrialExpiry.text = statusMsg
+
+            if (viewModel.isAdminUser()) {
+                btnAdmin.text = "Panel Administrador"
+                tvTrialExpiry.setBackgroundColor(android.graphics.Color.parseColor("#1A000000"))
+                tvTrialExpiry.setTextColor(android.graphics.Color.parseColor("#A7F3D0"))
+                tvTrialExpiry.setOnClickListener(null)
+            } else if (viewModel.isProUser()) {
+                btnAdmin.text = "⭐ Miembro PRO"
+                tvTrialExpiry.setBackgroundColor(android.graphics.Color.parseColor("#1A000000"))
+                tvTrialExpiry.setTextColor(android.graphics.Color.parseColor("#A7F3D0"))
+                tvTrialExpiry.setOnClickListener(null)
+            } else if (viewModel.isTrialExpired()) {
+                btnAdmin.text = "⭐ Suscribirme a PRO"
+                tvTrialExpiry.setBackgroundColor(android.graphics.Color.parseColor("#DC2626"))
+                tvTrialExpiry.setTextColor(android.graphics.Color.WHITE)
+                tvTrialExpiry.isClickable = true
+                tvTrialExpiry.setOnClickListener {
+                    showTrialExpiredDialog()
+                }
+            } else {
+                btnAdmin.text = "Ver Planes y Suscripción"
+                tvTrialExpiry.setBackgroundColor(android.graphics.Color.parseColor("#1A000000"))
+                tvTrialExpiry.setTextColor(android.graphics.Color.parseColor("#E0E7FF"))
+                tvTrialExpiry.setOnClickListener {
+                    startActivity(Intent(requireContext(), SubscriptionActivity::class.java))
+                }
+            }
+        }
+    }
+
+    private fun showTrialExpiredDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("⛔ Prueba Gratuita Finalizada")
+            .setMessage("Tu mes de prueba gratis (30 días) ha concluido.\n\nPara seguir calculando la rentabilidad de tus viajes y analizando tarifas en tiempo real, activa tu suscripción a GoRate PRO.")
+            .setCancelable(true)
+            .setPositiveButton("Suscribirme Ahora") { _, _ ->
+                startActivity(Intent(requireContext(), SubscriptionActivity::class.java))
+            }
+            .setNegativeButton("Cerrar", null)
+            .show()
+    }
+
     private fun initializeInterface() {
         binding.apply {
-            if (viewModel.isAdminUser()) {
-                tvTrialExpiry.text = "⚡ Administrador • Pro Ilimitado"
-            } else {
-                tvTrialExpiry.text = "Tu prueba termina el ${viewModel.getTrialExpiryDate()}"
-            }
+            updateSubscriptionBadge()
             
             updatePicoPlacaStatus()
             
@@ -159,8 +202,7 @@ class MainFragment : Fragment() {
                 if (isChecked) {
                     if (!viewModel.canUseService()) {
                         switchService.isChecked = false
-                        Toast.makeText(requireContext(), "Tu periodo de prueba ha finalizado. Suscríbete para continuar.", Toast.LENGTH_LONG).show()
-                        startActivity(Intent(requireContext(), SubscriptionActivity::class.java))
+                        showTrialExpiredDialog()
                         return@setOnCheckedChangeListener
                     }
 
