@@ -70,8 +70,6 @@ class OverlayService : Service() {
         private const val HEADS_UP_CHANNEL_ID = "com.gorate.app.heads_up_channel"
         private const val PICO_PLACA_CHANNEL_ID = "com.gorate.app.pico_placa_channel"
         private const val TAG = "OCR_ScannerService"
-        private const val MAX_RETRIES = 5
-        private const val RETRY_WINDOW_MS = 10 * 60 * 1000L
     }
 
     private lateinit var windowManager: WindowManager
@@ -102,9 +100,6 @@ class OverlayService : Service() {
     private var isAnalysisInProgress = false
     private var lastSuccessfulSyncTime = 0L
 
-    private var retryCount = 0
-    private var firstRetryTime = 0L
-
     private var toneGenerator: ToneGenerator? = null
     private val dismissTask = Runnable { hideOverlay() }
 
@@ -124,18 +119,6 @@ class OverlayService : Service() {
         }
     }
 
-    private val watchdogTask = object : Runnable {
-        override fun run() {
-            if (currentState == ScannerState.ACTIVE) {
-                val currentTime = System.currentTimeMillis()
-                if (currentTime - lastSuccessfulSyncTime > 20000L) {
-                    handleRecovery()
-                }
-            }
-            mainHandler.postDelayed(this, 10000L)
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
@@ -144,17 +127,12 @@ class OverlayService : Service() {
         tripRepository = (application as GoRateApplication).tripRepository
         projectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
-        // Inicio limpio sin tarjetas viejas
+        // Inicio limpio sin tarjetas viejas ni elementos flotantes en reposo
         serviceScope.launch { tripRepository.emitTrip(null, "") }
 
         transitionTo(ScannerState.STARTING)
-        if (prefsRepository.isOverlayBubbleEnabled()) {
-            showOverlay()
-            hideOverlay() // Iniciar minimizado en modo burbuja
-        }
 
         lastSuccessfulSyncTime = System.currentTimeMillis()
-        mainHandler.post(watchdogTask)
         mainHandler.post(monitorTask)
 
         tripRepository.currentTrip
@@ -202,10 +180,12 @@ class OverlayService : Service() {
         if (data != null) {
             setupMediaProjection(data)
         } else if (mediaProjection == null) {
-            transitionTo(ScannerState.REAUTH_REQUIRED)
+            transitionTo(ScannerState.INACTIVE)
+            stopSelf()
+            return START_NOT_STICKY
         }
 
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -221,7 +201,6 @@ class OverlayService : Service() {
         tripRepository.clearCurrentTrip()
         serviceScope.cancel()
         mainHandler.removeCallbacks(monitorTask)
-        mainHandler.removeCallbacks(watchdogTask)
         mainHandler.removeCallbacks(dismissTask)
 
         try {
@@ -250,9 +229,8 @@ class OverlayService : Service() {
             mediaProjection?.registerCallback(object : MediaProjection.Callback() {
                 override fun onStop() {
                     mainHandler.post {
-                        if (currentState != ScannerState.INACTIVE) {
-                            transitionTo(ScannerState.REAUTH_REQUIRED)
-                        }
+                        transitionTo(ScannerState.INACTIVE)
+                        stopSelf()
                     }
                 }
             }, mainHandler)
@@ -302,37 +280,13 @@ class OverlayService : Service() {
         mediaProjection = null
     }
 
-    private fun handleRecovery() {
-        val now = System.currentTimeMillis()
-        if (now - firstRetryTime > RETRY_WINDOW_MS) {
-            retryCount = 0
-            firstRetryTime = now
-        }
-        if (retryCount < MAX_RETRIES) {
-            retryCount++
-            transitionTo(ScannerState.RECOVERING)
-            releaseCaptureResources()
-            mainHandler.postDelayed({
-                if (mediaProjection != null) {
-                    setupCaptureResources()
-                    transitionTo(ScannerState.ACTIVE)
-                    lastSuccessfulSyncTime = System.currentTimeMillis()
-                } else {
-                    transitionTo(ScannerState.REAUTH_REQUIRED)
-                }
-            }, 1000)
-        } else {
-            transitionTo(ScannerState.ERROR)
-        }
-    }
-
     private fun transitionTo(newState: ScannerState) {
         if (currentState == newState) return
         currentState = newState
         updateNotification()
         val isRunning = (newState == ScannerState.ACTIVE || newState == ScannerState.STARTING || newState == ScannerState.RECOVERING)
         tripRepository.setServiceRunningState(isRunning)
-        if (newState == ScannerState.REAUTH_REQUIRED || newState == ScannerState.ERROR) {
+        if (newState == ScannerState.REAUTH_REQUIRED || newState == ScannerState.ERROR || newState == ScannerState.INACTIVE) {
             tripRepository.setServiceRunningState(false)
             releaseResources()
         }
@@ -436,7 +390,7 @@ class OverlayService : Service() {
     }
 
     private fun checkAutoDismiss() {
-        if (overlayView?.visibility == View.VISIBLE) {
+        if (overlayView != null) {
             missedScanCount++
             if (missedScanCount >= 2) {
                 lastEmittedData = ""
@@ -691,12 +645,11 @@ class OverlayService : Service() {
         } catch (_: Exception) {}
         updateNotification("GoRate: Escaneando", "Buscando ofertas de viaje...")
 
-        overlayView?.let { view ->
-            view.findViewById<View>(R.id.cardContainer)?.visibility = View.GONE
-            val bubbleContainer = view.findViewById<View>(R.id.bubbleContainer)
-            bubbleContainer?.visibility = View.VISIBLE
-            // La burbuja pequeña es un poco más transparente (65% opaca, 35% transparente)
-            bubbleContainer?.alpha = 0.65f
+        if (overlayView != null) {
+            try {
+                windowManager.removeView(overlayView)
+            } catch (e: Exception) {}
+            overlayView = null
         }
     }
 
