@@ -227,10 +227,6 @@ class BillingManager(
                     }
                 }
 
-                if (!foundActive && !prefs.isAdminUser() && !prefs.isTrialActive()) {
-                    // Si no tiene compra activa en Play Store ni es admin ni prueba, desactivar PRO
-                    prefs.setProUser(false)
-                }
                 onResult?.invoke(foundActive)
             } else {
                 onResult?.invoke(false)
