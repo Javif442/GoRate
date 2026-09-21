@@ -394,7 +394,7 @@ class OverlayService : Service() {
                     val tripData = parseAnyText(rawText)
                     if (tripData.price > 0 && (tripData.distanceKm > 0 || tripData.timeMin > 0)) {
                         missedScanCount = 0
-                        val dataKey = "${tripData.price}-${tripData.distanceKm}-${tripData.timeMin}"
+                        val dataKey = String.format(Locale.US, "%.2f-%.1f-%d", tripData.price, tripData.distanceKm, tripData.timeMin.toInt())
                         val currentTime = System.currentTimeMillis()
                         if (dataKey != lastEmittedData) {
                             lastEmittedData = dataKey

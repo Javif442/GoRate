@@ -190,20 +190,6 @@ class UberParser {
         return sanitized.toDoubleOrNull() ?: 0.0
     }
 
-    private fun calculateTrueTotal(values: List<Double>): Double {
-        if (values.isEmpty()) return 0.0
-        if (values.size == 1) return values.first()
-        
-        val max = values.maxOrNull() ?: 0.0
-        val sum = values.sum()
-        
-        val sumOfOthers = sum - max
-        if (kotlin.math.abs(max - sumOfOthers) < 0.5) {
-            return max
-        }
-        return sum
-    }
-
     private fun extractDistance(text: String, totalTimeMin: Double): Double {
         val matches = DISTANCE_REGEX.findAll(text).toList()
         if (matches.isEmpty()) return 0.0
@@ -227,8 +213,12 @@ class UberParser {
 
         if (parsedDistances.isEmpty()) return 0.0
         val validDistances = parsedDistances.filter { it in 0.2..200.0 }
+        if (validDistances.isEmpty()) return 0.0
         
-        return calculateTrueTotal(validDistances)
+        // En Uber, la distancia total del viaje/entrega es siempre el valor mayor que aparece en la tarjeta.
+        // Tomar siempre el máximo elimina por completo que el kilometraje salte o cambie entre frames
+        // por sumar o ignorar la distancia de recogida (pickup).
+        return validDistances.maxOrNull() ?: 0.0
     }
 
     private fun extractTime(text: String): Double {
@@ -246,7 +236,11 @@ class UberParser {
             if (rawValue > 0.0) rawValue else null
         }
 
-        return calculateTrueTotal(parsedTimes)
+        if (parsedTimes.isEmpty()) return 0.0
+        val validTimes = parsedTimes.filter { it in 1.0..600.0 }
+        if (validTimes.isEmpty()) return 0.0
+
+        return validTimes.maxOrNull() ?: 0.0
     }
 
     private fun extractRating(text: String): Float? {

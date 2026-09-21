@@ -59,38 +59,37 @@ class TripRepositoryImpl(context: Context) : TripRepository {
         saveMutex.withLock {
             val currentTime = System.currentTimeMillis()
 
-            // 1. FILTRO ANTI-PARPADEO (Stabilizer)
-            // Si llega una oferta en menos de 15 segundos
+            // 1. FILTRO ANTI-PARPADEO Y ESTABILIZADOR DE KILOMETRAJE
+            // Si llega una lectura dentro de los 15 segundos
             if ((currentTime - lastSavedTimestamp) < 15000) {
-                // Caso A: Si es el mismo viaje con distancia y tiempo casi idénticos
-                val sameDistance = kotlin.math.abs(result.distanceKm - lastSavedDistance) < 0.5
-                val sameTime = kotlin.math.abs(result.timeMin - lastSavedTimeMin) < 1.0
-
-                if (sameDistance && sameTime && lastSavedPrice > 0.0 && result.price > 0.0) {
-                    // Detección de glitch de 100x (ej. $2.88 vs $288.00 por omisión de coma en OCR)
+                // Caso A: Glitch de 100x en precio (ej. $2.88 vs $288.00 por omisión de coma en OCR)
+                if (lastSavedPrice > 0.0 && result.price > 0.0) {
                     val ratio = result.price / lastSavedPrice
                     val is100xGlitch = (ratio in 80.0..120.0) || (1.0 / ratio in 80.0..120.0)
-
                     if (is100xGlitch) {
-                        // Si la nueva lectura es el spike gigante (288.0) y ya teníamos la tarifa normal (2.88), descartamos el spike
                         if (result.price > lastSavedPrice) {
-                            return@withLock
+                            return@withLock // Descartamos el spike erróneo de 288.0
                         }
-                        // Si la que teníamos guardada era el spike (288.0) y ahora llegó la correcta (2.88),
-                        // dejamos pasar la corrección para estabilizar la pantalla en el valor real.
-                    } else if (kotlin.math.abs(result.price - lastSavedPrice) < 0.1) {
-                        // Mismo precio exacto y misma distancia/tiempo: no hacer parpadear la UI
-                        return@withLock
                     }
                 }
 
-                // Caso B: Mismo precio pero la nueva perdió la distancia por un mal escaneo del OCR
+                // Caso B: MISMA OFERTA EN PANTALLA (Mismo precio) -> Estabilización absoluta de KM
                 if (kotlin.math.abs(result.price - lastSavedPrice) < 0.1) {
-                    if (result.distanceKm <= 0.0 && lastSavedDistance > 0.0) {
-                        return@withLock // Descartamos la lectura mala, mantenemos la buena en pantalla
-                    }
-                    if (kotlin.math.abs(result.distanceKm - lastSavedDistance) < 1.0) {
-                        return@withLock // Es la misma oferta, no hacemos parpadear la pantalla
+                    if (lastSavedDistance > 0.0) {
+                        // 1. Si la nueva lectura perdió la distancia o leyó 0: descartar
+                        if (result.distanceKm <= 0.0) {
+                            return@withLock
+                        }
+                        // 2. Si la nueva lectura leyó solo la recogida (ej. 1.5 km en vez de 20.0 km total): descartar
+                        if (result.distanceKm < lastSavedDistance * 0.85) {
+                            return@withLock
+                        }
+                        // 3. Si la distancia es coherente con la actual (variación menor a 3.0 km o menor al 25%):
+                        // Mantener firme el kilometraje ya mostrado, bloqueando cualquier parpadeo en pantalla
+                        val diffDist = kotlin.math.abs(result.distanceKm - lastSavedDistance)
+                        if (diffDist < 3.0 || (diffDist / lastSavedDistance) < 0.25) {
+                            return@withLock
+                        }
                     }
                 }
             }
